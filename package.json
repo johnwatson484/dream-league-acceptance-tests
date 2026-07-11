@@ -1,0 +1,35 @@
+{
+  "name": "dream-league-acceptance-tests",
+  "version": "0.0.0",
+  "description": "Acceptance tests for Dream League web application",
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "generate": "bddgen test",
+    "test": "npm run generate && playwright test",
+    "test:headed": "npm run generate && playwright test --headed",
+    "test:ui": "npm run generate && playwright test --ui",
+    "test:debug": "npm run generate && playwright test --debug",
+    "test:public": "npm run generate && playwright test --project=public",
+    "test:admin": "npm run generate && playwright test --project=admin",
+    "test:auth": "npm run generate && playwright test --project=auth",
+    "report": "playwright show-report",
+    "typecheck": "tsc",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "author": "John Watson",
+  "license": "MIT",
+  "devDependencies": {
+    "@cucumber/cucumber": "13.0.0",
+    "@playwright/test": "1.61.1",
+    "@types/node": "22.15.0",
+    "dotenv": "16.5.0",
+    "eslint": "9.27.0",
+    "neostandard": "0.12.1",
+    "playwright-bdd": "9.2.0",
+    "typescript": "5.8.3"
+  }
+}
