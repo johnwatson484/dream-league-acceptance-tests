@@ -1,0 +1,121 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: dream_league_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - acceptance_test_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d dream_league_test']
+      interval: 5s
+      retries: 5
+      start_period: 2s
+      timeout: 5s
+    networks:
+      - dream-league-test
+
+  redis-api:
+    image: redis:7-alpine
+    command: redis-server --requirepass redis
+    healthcheck:
+      test: ['CMD', 'redis-cli', '-a', 'redis', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - dream-league-test
+
+  redis-web:
+    image: redis:7-alpine
+    command: redis-server --requirepass redis
+    healthcheck:
+      test: ['CMD', 'redis-cli', '-a', 'redis', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - dream-league-test
+
+  api:
+    build:
+      context: ../dream-league-api
+      target: development
+    ports:
+      - '127.0.0.1:3110:3001'
+    volumes:
+      - ../dream-league-api/src:/home/node/src
+      - ../dream-league-api/scripts:/home/node/scripts
+      - ../dream-league-api/.sequelizerc:/home/node/.sequelizerc
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USERNAME: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: dream_league_test
+      REDIS_HOST: redis-api
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redis
+      JWT_SECRET: acceptance-test-secret
+      WEB_URL: http://web:3000
+      ALLOW_NON_MEMBER_REGISTRATION: 'true'
+    command: >
+      sh -c "
+        npx sequelize-cli db:migrate &&
+        node scripts/seed-test-data.ts --gameweek 5 --results &&
+        node src/index.ts"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis-api:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://localhost:3001/managers || exit 1']
+      interval: 5s
+      retries: 20
+      start_period: 30s
+      timeout: 5s
+    networks:
+      - dream-league-test
+
+  web:
+    build:
+      context: ../dream-league-web
+      target: development
+    ports:
+      - '127.0.0.1:3100:3000'
+    volumes:
+      - ../dream-league-web/src:/home/node/src
+      - ../dream-league-web/.public:/home/node/.public
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      API_HOST: http://api:3001
+      COOKIE_PASSWORD: acceptance-test-cookie-password-32chars!!
+      REDIS_HOST: redis-web
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: redis
+    depends_on:
+      api:
+        condition: service_healthy
+      redis-web:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://localhost:3000/ || exit 1']
+      interval: 5s
+      retries: 10
+      start_period: 5s
+      timeout: 5s
+    networks:
+      - dream-league-test
+
+volumes:
+  acceptance_test_postgres_data:
+
+networks:
+  dream-league-test:
+    driver: bridge
+    name: dream-league-test
