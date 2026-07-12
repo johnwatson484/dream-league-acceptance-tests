@@ -7,6 +7,6 @@ export class HistoryPage extends BasePage {
   }
 
   get historyTable (): Locator {
-    return this.page.locator('table')
+    return this.page.locator('table').first()
   }
 }

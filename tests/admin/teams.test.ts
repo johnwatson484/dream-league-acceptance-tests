@@ -20,7 +20,7 @@ test.describe('Team administration', () => {
   test('edit a team', async ({ apiClient, page, entityFormPage }) => {
     await apiClient.createTeam()
     await page.goto('/league/teams')
-    const row = page.locator('tr', { hasText: TEST_DATA.team.name })
+    const row = page.locator('tr', { hasText: TEST_DATA.team.name }).first()
     await row.locator('a[href*="team/edit"]').click()
     await page.locator('#alias').clear()
     await page.locator('#alias').fill('TFCU')
@@ -31,10 +31,11 @@ test.describe('Team administration', () => {
   test('delete a team', async ({ apiClient, page, entityFormPage }) => {
     await apiClient.createTeam()
     await page.goto('/league/teams')
-    const row = page.locator('tr', { hasText: TEST_DATA.team.name })
-    await row.locator('a[href*="team/delete"]').click()
+    const rows = page.locator('tr', { hasText: TEST_DATA.team.name })
+    const countBefore = await rows.count()
+    await rows.first().locator('a[href*="team/delete"]').click()
     await entityFormPage.submit()
     await expect(page).toHaveURL(/\/league\/teams/)
-    await expect(page.locator('body')).not.toContainText(TEST_DATA.team.name)
+    await expect(page.locator('tr', { hasText: TEST_DATA.team.name })).toHaveCount(countBefore - 1)
   })
 })

@@ -18,7 +18,7 @@ test.describe('Cup administration', () => {
   test('edit a cup', async ({ apiClient, page, entityFormPage }) => {
     await apiClient.createCup()
     await page.goto('/cups')
-    const row = page.locator('tr', { hasText: TEST_DATA.cup.name })
+    const row = page.locator('tr', { hasText: TEST_DATA.cup.name }).first()
     await row.locator('a[href*="cup/edit"]').click()
     await page.locator('#name').clear()
     await page.locator('#name').fill('Test Cup Updated')
@@ -29,10 +29,11 @@ test.describe('Cup administration', () => {
   test('delete a cup', async ({ apiClient, page, entityFormPage }) => {
     await apiClient.createCup()
     await page.goto('/cups')
-    const row = page.locator('tr', { hasText: TEST_DATA.cup.name })
-    await row.locator('a[href*="cup/delete"]').click()
+    const rows = page.locator('tr', { hasText: TEST_DATA.cup.name })
+    const countBefore = await rows.count()
+    await rows.first().locator('a[href*="cup/delete"]').click()
     await entityFormPage.submit()
     await expect(page).toHaveURL(/\/cups/)
-    await expect(page.locator('body')).not.toContainText(TEST_DATA.cup.name)
+    await expect(page.locator('tr', { hasText: TEST_DATA.cup.name })).toHaveCount(countBefore - 1)
   })
 })

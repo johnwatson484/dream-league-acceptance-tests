@@ -20,7 +20,7 @@ test.describe('Manager administration', () => {
   test('edit a manager', async ({ apiClient, page, entityFormPage }) => {
     await apiClient.createManager()
     await page.goto('/managers')
-    const row = page.locator('tr', { hasText: TEST_DATA.manager.name })
+    const row = page.locator('tr', { hasText: TEST_DATA.manager.name }).first()
     await row.locator('a[href*="manager/edit"]').click()
     await page.locator('#alias').clear()
     await page.locator('#alias').fill('TMgr')
@@ -31,10 +31,11 @@ test.describe('Manager administration', () => {
   test('delete a manager', async ({ apiClient, page, entityFormPage }) => {
     await apiClient.createManager()
     await page.goto('/managers')
-    const row = page.locator('tr', { hasText: TEST_DATA.manager.name })
-    await row.locator('a[href*="manager/delete"]').click()
+    const rows = page.locator('tr', { hasText: TEST_DATA.manager.name })
+    const countBefore = await rows.count()
+    await rows.first().locator('a[href*="manager/delete"]').click()
     await entityFormPage.submit()
     await expect(page).toHaveURL(/\/managers/)
-    await expect(page.locator('body')).not.toContainText(TEST_DATA.manager.name)
+    await expect(page.locator('tr', { hasText: TEST_DATA.manager.name })).toHaveCount(countBefore - 1)
   })
 })

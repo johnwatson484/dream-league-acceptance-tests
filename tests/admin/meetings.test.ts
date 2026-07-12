@@ -18,7 +18,7 @@ test.describe('Meeting administration', () => {
   test('edit a meeting', async ({ apiClient, page, entityFormPage }) => {
     await apiClient.createMeeting()
     await page.goto('/meetings')
-    const row = page.locator('tr', { hasText: '2099' })
+    const row = page.locator('tr', { hasText: '2099' }).first()
     await row.locator('a[href*="meeting/edit"]').click()
     await page.locator('#date').clear()
     await page.locator('#date').fill('2099-06-15')
@@ -29,7 +29,7 @@ test.describe('Meeting administration', () => {
   test('delete a meeting', async ({ apiClient, page, entityFormPage }) => {
     await apiClient.createMeeting()
     await page.goto('/meetings')
-    const row = page.locator('tr', { hasText: '2099' })
+    const row = page.locator('tr', { hasText: '2099' }).first()
     await row.locator('a[href*="meeting/delete"]').click()
     await entityFormPage.submit()
     await expect(page).toHaveURL(/\/meetings/)

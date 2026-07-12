@@ -15,7 +15,7 @@ export class EntityFormPage extends BasePage {
   }
 
   get submitButton (): Locator {
-    return this.page.locator('form button[type="submit"]')
+    return this.page.locator('.container form button[type="submit"]')
   }
 
   get form (): Locator {

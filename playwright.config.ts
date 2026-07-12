@@ -38,7 +38,6 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         storageState: '.auth/admin.json',
       },
-      fullyParallel: true,
       dependencies: ['auth-setup'],
       testMatch: /admin\//,
     },

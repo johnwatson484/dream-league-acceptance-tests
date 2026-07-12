@@ -6,7 +6,7 @@ export class BasePage {
   async navigateTo (path: string): Promise<void> {
     await this.page.context().addCookies([{
       name: 'cookies_policy',
-      value: encodeURIComponent(JSON.stringify({ confirmed: true, essential: true, analytics: false })),
+      value: Buffer.from(JSON.stringify({ confirmed: true, essential: true, analytics: false })).toString('base64'),
       domain: 'localhost',
       path: '/',
     }])

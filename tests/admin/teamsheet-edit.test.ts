@@ -10,6 +10,6 @@ test.describe('Teamsheet editing', () => {
   test('player autocomplete shows results', async ({ teamsheetEditPage, page }) => {
     await teamsheetEditPage.goto()
     await teamsheetEditPage.playerInputs.first().fill('a')
-    await expect(page.locator('.ui-autocomplete')).toBeVisible()
+    await expect(page.locator('.ui-autocomplete .ui-menu-item').first()).toBeVisible()
   })
 })
