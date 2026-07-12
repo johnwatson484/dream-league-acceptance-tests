@@ -9,7 +9,7 @@ test.describe('Registration', () => {
   test('registration with unrecognised email', async ({ loginPage, page }) => {
     await page.goto('/register')
     await loginPage.emailInput.fill('unknown@test.com')
-    await loginPage.passwordInput.fill('password123')
+    await loginPage.passwordInput.fill('password12345')
     await loginPage.submitButton.click()
     await expect(page.locator('body')).toContainText('Email already registered or not a league member')
   })
