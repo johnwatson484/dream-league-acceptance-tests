@@ -19,8 +19,8 @@ export class ApiClient {
       throw new Error(`Login failed: ${response.status} ${response.statusText}`)
     }
 
-    const data = await response.json() as { token: string }
-    this.token = data.token
+    const data = await response.json() as { accessToken: string }
+    this.token = data.accessToken
   }
 
   private async get (path: string): Promise<Entity[]> {

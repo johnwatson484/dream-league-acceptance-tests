@@ -4,6 +4,12 @@ export class BasePage {
   constructor (protected readonly page: Page) {}
 
   async navigateTo (path: string): Promise<void> {
+    await this.page.context().addCookies([{
+      name: 'cookies_policy',
+      value: encodeURIComponent(JSON.stringify({ confirmed: true, essential: true, analytics: false })),
+      domain: 'localhost',
+      path: '/',
+    }])
     await this.page.goto(path)
   }
 
