@@ -11,7 +11,7 @@
     "skipLibCheck": true
   },
   "include": [
-    "steps/**/*.ts",
+    "tests/**/*.ts",
     "pages/**/*.ts",
     "support/**/*.ts",
     "playwright.config.ts"

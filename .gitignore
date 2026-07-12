@@ -1,7 +1,6 @@
 node_modules/
 .env
 .auth/
-.generated-tests/
 test-results/
 playwright-report/
 blob-report/
