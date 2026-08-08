@@ -33,6 +33,14 @@ export class BasePage {
     await this.page.locator('.navbar-nav .nav-link', { hasText: text }).click()
   }
 
+  async clickNavDropdownItem (menu: string, item: string): Promise<void> {
+    const navItem = this.page.locator('.navbar-nav .nav-item.dropdown', {
+      has: this.page.locator('.nav-link.dropdown-toggle', { hasText: menu }),
+    })
+    await navItem.locator('.nav-link.dropdown-toggle').click()
+    await navItem.locator('.dropdown-item', { hasText: item }).click()
+  }
+
   async isLoggedIn (): Promise<boolean> {
     return this.logoutButton.isVisible()
   }

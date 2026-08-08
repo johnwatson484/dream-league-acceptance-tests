@@ -11,7 +11,7 @@ test.describe('Home page', () => {
 
   test('navigates to results from home', async ({ homePage, basePage, page }) => {
     await homePage.goto()
-    await basePage.clickNavLink('Results')
+    await basePage.clickNavDropdownItem('Results', 'View')
     await expect(page).toHaveURL(/\/results/)
   })
 })
